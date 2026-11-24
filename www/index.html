@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#16223B">
+<title>Tiếng Nhật N5–N3</title>
+<style>
+:root{--bg:#EEF1F6;--card:#fff;--ink:#16223B;--mut:#66708A;--acc:#2447A8;--line:#DCE1EC;--good:#1F8A5B;--bad:#C0392B}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Noto Sans JP","Hiragino Sans",system-ui,sans-serif}
+header{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;align-items:center;gap:10px}
+header h1{font-size:18px;margin:0;font-weight:600;flex:1}
+header button{background:none;border:0;color:#fff;font-size:22px;padding:2px 8px}
+main{max-width:640px;margin:0 auto;padding:14px 14px calc(24px + env(safe-area-inset-bottom))}
+.lvl{margin:0 0 18px}
+.lvl h2{font-size:15px;margin:0 0 8px;color:var(--mut);font-weight:600}
+.row{display:flex;align-items:center;justify-content:space-between;width:100%;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:8px;font:inherit;color:inherit;text-align:left}
+.row b{font-weight:600}.row small{color:var(--mut)}
+.bar{height:4px;background:var(--line);border-radius:2px;margin-top:6px;overflow:hidden}.bar i{display:block;height:100%;background:var(--good)}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;padding:9px;border:1px solid var(--line);background:var(--card);border-radius:8px;font:inherit;color:var(--mut)}
+.tabs button.on{background:var(--acc);border-color:var(--acc);color:#fff}
+input[type=search]{width:100%;padding:11px 12px;border:1px solid var(--line);border-radius:8px;font:inherit;margin-bottom:10px;background:#fff}
+.item{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 14px;margin-bottom:7px}
+.item .w{font-size:20px;font-family:"Noto Serif JP","Hiragino Mincho ProN",serif}
+.item .r{color:var(--acc);font-size:14px;margin-left:8px}
+.item .m{color:var(--ink)}.item .t{color:var(--mut);font-size:13px}
+details summary{cursor:pointer;list-style:none}details summary::-webkit-details-marker{display:none}
+.d{margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);font-size:14.5px;color:#2c3857}
+.d p{margin:4px 0}.d .f{color:var(--acc);font-weight:600}
+.k{display:flex;gap:14px}.k .big{font-size:44px;line-height:1.1;font-family:"Noto Serif JP","Hiragino Mincho ProN",serif;min-width:56px}
+.more{display:block;margin:10px auto;padding:10px 20px;border:1px solid var(--acc);background:none;color:var(--acc);border-radius:8px;font:inherit}
+.fc{background:var(--card);border:1px solid var(--line);border-radius:16px;min-height:300px;padding:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:8px}
+.fc .big{font-size:46px;font-family:"Noto Serif JP","Hiragino Mincho ProN",serif;line-height:1.25;word-break:break-all}
+.fc .hint{color:var(--mut);font-size:14px}.fc .rd{color:var(--acc);font-size:20px}.fc .mn{font-size:20px}
+.meta{display:flex;justify-content:space-between;color:var(--mut);font-size:13px;margin:0 2px 8px}
+.btns{display:flex;gap:10px;margin-top:12px}
+.btns button{flex:1;padding:14px;border:0;border-radius:10px;font:inherit;font-weight:600;color:#fff}
+.no{background:var(--bad)}.yes{background:var(--good)}.pri{background:var(--acc)}
+.q{font-size:30px;text-align:center;font-family:"Noto Serif JP","Hiragino Mincho ProN",serif;margin:14px 0 18px}
+.opt{display:block;width:100%;text-align:left;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px;font:inherit;color:inherit}
+.opt.ok{border-color:var(--good);background:#E6F5EE}.opt.ng{border-color:var(--bad);background:#FBE9E7}
+.center{text-align:center;padding:30px 0}.center h2{margin:0 0 6px}
+.empty{color:var(--mut);text-align:center;padding:26px}
+textarea{width:100%;padding:10px;border:1px solid var(--line);border-radius:8px;font:14px/1.4 monospace;margin:6px 0}
+</style>
+</head>
+<body>
+<header><button id="back" aria-label="Quay lại" hidden>‹</button><h1 id="title">Tiếng Nhật N5–N3</h1></header>
+<main id="app"></main>
+<script src="data.js"></script>
+<script>
+let DATA=(()=>{try{return JSON.parse(localStorage.getItem("dataV"))||window.DATA}catch(e){return window.DATA}})();
+const SUB={N5:"Sơ cấp",N4:"Sơ cấp",N3:"Trung cấp",N2:"Trung – cao cấp",N1:"Cao cấp"};
+const getLevels=()=>["N5","N4","N3","N2","N1"].map(n=>[n,SUB[n],["v","g","k"].map(c=>n.toLowerCase()+c).filter(id=>DATA[id])]).filter(l=>l[2].length);
+const $=s=>document.querySelector(s);
+const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const known=id=>{try{return new Set(JSON.parse(localStorage.getItem("k:"+id)||"[]"))}catch(e){return new Set()}};
+const saveKnown=(id,s)=>{try{localStorage.setItem("k:"+id,JSON.stringify([...s]))}catch(e){}};
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const hasM=(k,it)=>k==="kanji"?!!it.v:!!it.m;
+const S={limit:60,q:"",card:null,quiz:null};
+
+function route(){
+  const p=location.hash.replace(/^#\/?/,"").split("/");
+  const id=p[1],tab=p[2]||"list";
+  const app=$("#app"),back=$("#back");
+  back.hidden=!id&&p[0]!=="sync";
+  if(p[0]==="sync")return syncView(app);
+  if(!id){$("#title").textContent="Tiếng Nhật N5–N3";return home(app)}
+  const D=DATA[id];$("#title").textContent=D.t;
+  S.limit=60;S.q="";
+  if(tab==="cards"&&D.k!=="grammar")return startCards(app,id);
+  if(tab==="quiz"&&D.k!=="grammar")return startQuiz(app,id);
+  list(app,id);
+}
+$("#back").onclick=()=>history.back();
+addEventListener("hashchange",route);
+
+function home(app){
+  app.innerHTML=getLevels().map(([n,sub,ids])=>`<section class="lvl"><h2>${n} · ${sub}</h2>`+ids.map(id=>{
+    const D=DATA[id],kn=known(id).size,tot=D.i.filter(x=>hasM(D.k,x)).length;
+    const bar=D.k==="grammar"?"":`<div class="bar"><i style="width:${tot?kn*100/tot:0}%"></i></div>`;
+    return `<button class="row" onclick="location.hash='#/d/${id}'"><span style="flex:1"><b>${D.t}</b><br><small>${D.i.length} mục${D.k==="grammar"?"":" · đã nhớ "+kn}</small>${bar}</span><span>›</span></button>`}).join("")+`</section>`).join("")+`<button class="row" onclick="location.hash='#/sync'"><b>⟳ Cập nhật dữ liệu từ Google Sheets</b><span>›</span></button>`;
+}
+
+function tabs(id,cur){
+  const D=DATA[id];if(D.k==="grammar")return"";
+  const T=[["list","Danh sách"],["cards","Thẻ nhớ"],["quiz","Trắc nghiệm"]];
+  return `<div class="tabs">${T.map(([k,l])=>`<button class="${k===cur?"on":""}" onclick="location.replace('#/d/${id}/${k}')">${l}</button>`).join("")}</div>`;
+}
+
+function itemHTML(k,it){
+  if(k==="vocab")return `<div class="item"><span class="w">${esc(it.w)}</span><span class="r">${esc(it.r)}</span><div class="m">${esc(it.m)||"<i class='t'>(chưa có nghĩa)</i>"}</div>${it.t?`<div class="t">${esc(it.t)}</div>`:""}</div>`;
+  if(k==="vocabg")return `<div class="item"><span class="t">${esc(it.n)}</span> <span class="w">${esc(it.w)}</span><span class="r">${esc(it.r)}</span><div class="m">${esc(it.m)}</div>${it.c.map(x=>`<div class="d" style="margin-top:4px;padding-top:4px"><span class="w" style="font-size:17px">${esc(x.w)}</span><span class="r">${esc(x.r)}</span><div class="m">${esc(x.m)}</div></div>`).join("")}</div>`;
+  if(k==="kanji")return `<div class="item k"><div class="big">${esc(it.k)}</div><div><b>${esc(it.v)}</b> <span class="t">On: ${esc(it.on)||"–"} · Kun: ${esc(it.kun)||"–"}</span>${it.ex.map((e,i)=>`<div class="d" style="margin-top:4px;padding-top:4px"><span>${esc(e)}</span> <span class="t">${esc(it.m[i]||"")}</span></div>`).join("")}</div></div>`;
+  const det=(it.d||[]).map(x=>`<p>${x.f?`<span class="f">${esc(x.f)}</span><br>`:""}${esc(x.t)}</p>`).join("")+(it.n?`<p>${esc(it.n)}</p>`:"");
+  return `<details class="item"><summary><b>${esc(it.g)}</b><div class="m">${esc(it.m)}</div></summary>${det?`<div class="d">${det}</div>`:""}</details>`;
+}
+
+function list(app,id){
+  const D=DATA[id];
+  app.innerHTML=tabs(id,"list")+`<input type="search" id="q" placeholder="Tìm kiếm (Nhật hoặc Việt)…"><div id="L"></div>`;
+  const q=$("#q");q.oninput=()=>{S.q=q.value;S.limit=60;paint()};
+  function paint(){
+    const s=S.q.trim().toLowerCase();
+    const f=s?D.i.filter(it=>JSON.stringify(it).toLowerCase().includes(s)):D.i;
+    $("#L").innerHTML=f.slice(0,S.limit).map(it=>itemHTML(D.k,it)).join("")||`<div class="empty">Không tìm thấy kết quả.</div>`;
+    if(f.length>S.limit){const b=document.createElement("button");b.className="more";b.textContent=`Xem thêm (${f.length-S.limit})`;b.onclick=()=>{S.limit+=100;paint()};$("#L").appendChild(b)}
+  }
+  paint();
+}
+
+function front(k,it){return k==="kanji"?it.k:it.w}
+function startCards(app,id){
+  const D=DATA[id],kn=known(id);
+  const q=shuffle(D.i.map((it,i)=>i).filter(i=>hasM(D.k,D.i[i])&&!kn.has(i)));
+  S.card={q,flip:false,done:0};cards(app,id);
+}
+function cards(app,id){
+  const D=DATA[id],c=S.card,kn=known(id),tot=D.i.filter(x=>hasM(D.k,x)).length;
+  if(!c.q.length){app.innerHTML=tabs(id,"cards")+`<div class="center"><h2>Hoàn thành 🎉</h2><p class="t">Bạn đã nhớ ${kn.size}/${tot} thẻ.</p><button class="more" id="rs">Học lại từ đầu</button></div>`;
+    $("#rs").onclick=()=>{saveKnown(id,new Set());startCards(app,id)};return}
+  const it=D.i[c.q[0]],G=D.k==="vocabg";
+  const back=D.k==="kanji"?`<div class="rd">${esc(it.v)}</div><div class="hint">On: ${esc(it.on)||"–"} · Kun: ${esc(it.kun)||"–"}</div><div class="mn">${it.ex.map(esc).join("<br>")}</div><div class="hint">${it.m.map(esc).join(" · ")}</div>`
+    :G?`<div class="rd">${esc(it.r)}</div><div class="mn">${esc(it.m)}</div>${it.c.map(x=>`<div class="hint" style="font-size:16px;color:var(--ink)">${esc(x.w)} <span style="color:var(--acc)">${esc(x.r)}</span><br>${esc(x.m)}</div>`).join("")}`
+    :`${it.r?`<div class="rd">${esc(it.r)}</div>`:""}<div class="mn">${esc(it.m)}</div>${it.t?`<div class="hint">${esc(it.t)}</div>`:""}`;
+  app.innerHTML=tabs(id,"cards")+`<div class="meta"><span>Còn ${c.q.length} thẻ</span><span>Đã nhớ ${kn.size}/${tot}</span></div>
+  <div class="fc" id="fc">${G&&it.n?`<div class="hint">#${esc(it.n)}</div>`:""}<div class="big">${esc(front(D.k,it))}</div>${G&&!c.flip?it.c.map(x=>`<div class="mn" style="font-family:'Noto Serif JP','Hiragino Mincho ProN',serif">${esc(x.w)}</div>`).join(""):""}${c.flip?back:`<div class="hint">Chạm để xem nghĩa</div>`}</div>
+  ${c.flip?`<div class="btns"><button class="no" id="no">Chưa nhớ</button><button class="yes" id="yes">Đã nhớ</button></div>`:`<div class="btns"><button class="pri" id="show">Hiện đáp án</button></div>`}`;
+  const flip=()=>{c.flip=true;cards(app,id)};
+  $("#fc").onclick=()=>{if(!c.flip)flip()};
+  if(c.flip){
+    $("#no").onclick=()=>{c.q.push(c.q.shift());c.flip=false;cards(app,id)};
+    $("#yes").onclick=()=>{const i=c.q.shift();kn.add(i);saveKnown(id,kn);c.flip=false;cards(app,id)};
+  }else $("#show").onclick=flip;
+}
+
+function startQuiz(app,id){
+  const D=DATA[id],pool=D.i.filter(x=>hasM(D.k,x));
+  const ans=x=>D.k==="kanji"?x.v:x.m;
+  const qs=shuffle(pool).slice(0,10).map(it=>{
+    const wrong=[];for(const o of shuffle(pool)){if(ans(o)!==ans(it)&&!wrong.includes(ans(o)))wrong.push(ans(o));if(wrong.length===3)break}
+    return{p:front(D.k,it),a:ans(it),o:shuffle([ans(it),...wrong])};
+  });
+  S.quiz={qs,i:0,s:0,pick:null};quiz(app,id);
+}
+function quiz(app,id){
+  const z=S.quiz;
+  if(z.i>=z.qs.length){app.innerHTML=tabs(id,"quiz")+`<div class="center"><h2>${z.s}/${z.qs.length} câu đúng</h2><button class="more" id="again">Làm bộ mới</button></div>`;$("#again").onclick=()=>startQuiz(app,id);return}
+  const q=z.qs[z.i];
+  app.innerHTML=tabs(id,"quiz")+`<div class="meta"><span>Câu ${z.i+1}/${z.qs.length}</span><span>Điểm ${z.s}</span></div><div class="q">${esc(q.p)}</div>`+
+   q.o.map((o,i)=>{let c="";if(z.pick!==null){if(o===q.a)c=" ok";else if(i===z.pick)c=" ng"}return `<button class="opt${c}" data-i="${i}">${esc(o)}</button>`}).join("")+
+   (z.pick!==null?`<div class="btns"><button class="pri" id="nx">Tiếp</button></div>`:"");
+  if(z.pick===null)document.querySelectorAll(".opt").forEach(b=>b.onclick=()=>{z.pick=+b.dataset.i;if(q.o[z.pick]===q.a)z.s++;quiz(app,id)});
+  else $("#nx").onclick=()=>{z.i++;z.pick=null;quiz(app,id)};
+}
+
+/* ===== Cập nhật dữ liệu từ Google Sheets ===== */
+function parseCSV(t){const R=[];let r=[],c="",q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}else if(ch=='"')q=true;else if(ch==","){r.push(c);c=""}else if(ch=="\n"){r.push(c);R.push(r);r=[];c=""}else if(ch!="\r")c+=ch}if(c!==""||r.length){r.push(c);R.push(r)}return R}
+function buildDeck(nm,rows){
+  const m=nm.match(/N(\d)/);if(!m||!rows.length)return null;
+  const lv="n"+m[1],head=rows[0].map(x=>x.trim());
+  const body=rows.slice(1).map(r=>r.map(x=>x.trim()).concat(Array(8).fill(""))).filter(r=>r.slice(1).some(Boolean));
+  let key,kind,title,items;
+  if(nm.includes("Kanji")){
+    if(head[1]!=="漢字"||!head.includes("Phiên âm"))return null;
+    key=lv+"k";kind="kanji";title="Kanji "+lv.toUpperCase();
+    items=body.filter(r=>r[1]).map(r=>({k:r[1],v:r[2],on:r[3],kun:r[4].replace(/\n/g," / "),ex:r[5].split("\n"),m:r[6].split("\n")}));
+  }else if(nm.includes("Từ vựng")){
+    key=lv+"v";kind="vocab";title="Từ vựng "+lv.toUpperCase();
+    if(head[1]==="Từ vựng"&&head.includes("Phiên âm"))items=body.map(r=>({w:r[1],r:r[2],m:r[3],t:r[4]}));
+    else if(head[2]==="フリガナ"){kind="vocabg";items=[];for(const r of body){if(!r[1])continue;if(r[0]||!items.length)items.push({n:r[0],w:r[1],r:r[2],m:r[3],c:[]});else items[items.length-1].c.push({w:r[1],r:r[2],m:r[3]})}}
+    else if(head[1]==="Từ vựng"&&head[2]==="Nghĩa")items=body.map(r=>({w:r[1],r:"",m:r[2],t:r[3]}));
+    else return null;
+    items=items.filter(i=>i.w);
+  }else if(nm.includes("Ngữ pháp")){
+    key=lv+"g";kind="grammar";title="Ngữ pháp "+lv.toUpperCase();
+    if(head.includes("使う方")){items=[];for(const r of body){if(r[0])items.push({g:r[1],m:r[2],n:"",d:[]});else if(items.length&&(r[1]||r[2]))items[items.length-1].d.push({f:r[1],t:r[2]})}}
+    else if(head[1]==="Ngữ pháp")items=body.filter(r=>r[1]).map(r=>({g:r[1],m:r[2],n:r[3],d:[]}));
+    else return null;
+  }else return null;
+  return items.length?{key,deck:{t:title,k:kind,i:items}}:null;
+}
+async function fetchSheet(id,nm){
+  const r=await fetch(`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(nm)}`);
+  if(!r.ok)throw new Error(r.status);return parseCSV(await r.text());
+}
+async function syncData(links){
+  const ids=[...new Set(links.map(l=>(l.match(/\/d\/([\w-]+)/)||[])[1]).filter(Boolean))];
+  if(!ids.length)throw new Error("Chưa có đường dẫn Google Sheets hợp lệ.");
+  const names=[];for(const n of [5,4,3,2])for(const t of ["Tổng hợp Từ vựng","Tổng hợp Ngữ pháp","Kanji"])names.push(t+" N"+n);
+  const jobs=[];ids.forEach(id=>names.forEach(nm=>jobs.push(fetchSheet(id,nm).then(rows=>({nm,rows})).catch(()=>null))));
+  const out={};let n=0;
+  for(const x of await Promise.all(jobs)){if(!x)continue;const d=buildDeck(x.nm,x.rows);if(d){out[d.key]=d.deck;n++}}
+  if(!n)throw new Error("Không đọc được sheet nào. Kiểm tra: đã chia sẻ \"Bất kỳ ai có đường liên kết\" (người xem) chưa, file là Google Sheets (không phải .xlsx), và tên sheet còn đúng không.");
+  return out;
+}
+function syncView(app){
+  $("#title").textContent="Cập nhật dữ liệu";
+  const links=localStorage.getItem("links")||"",t=localStorage.getItem("dataT");
+  app.innerHTML=`<p class="t">Dán đường dẫn Google Sheets (mỗi file một dòng), rồi bấm Cập nhật. Dữ liệu mới được lưu trong máy và dùng được offline.</p>
+  <textarea id="lk" rows="4" placeholder="https://docs.google.com/spreadsheets/d/…">${esc(links)}</textarea>
+  <div class="btns"><button class="pri" id="go">Cập nhật ngay</button></div>
+  <div class="btns"><button class="no" id="rst">Dùng lại dữ liệu gốc</button></div>
+  <p id="st" class="t">${t?"Cập nhật lần cuối: "+esc(t):"Đang dùng dữ liệu đóng gói sẵn."}</p>`;
+  $("#go").onclick=async()=>{
+    const v=$("#lk").value;localStorage.setItem("links",v);
+    const st=$("#st");st.textContent="Đang tải…";
+    try{
+      const out=await syncData(v.split(/\s+/).filter(Boolean));
+      DATA={...DATA,...out};const now=new Date().toLocaleString("vi-VN");
+      try{localStorage.setItem("dataV",JSON.stringify(DATA));localStorage.setItem("dataT",now)}catch(e){}
+      st.textContent="Xong "+now+": đã cập nhật "+Object.keys(out).map(k=>DATA[k].t+" ("+DATA[k].i.length+")").join(", ");
+    }catch(e){st.textContent="Lỗi: "+e.message}
+  };
+  $("#rst").onclick=()=>{localStorage.removeItem("dataV");localStorage.removeItem("dataT");DATA=window.DATA;$("#st").textContent="Đã dùng lại dữ liệu gốc."};
+}
+route();
+</script>
+</body>
+</html>
